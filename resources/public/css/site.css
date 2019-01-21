@@ -1,0 +1,63 @@
+.body-container {
+  font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
+  max-width: 98pct;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1.125em;
+  color: #333;
+  line-height: 1.5em;
+}
+
+h1, h2, h3 {
+  color: #000;
+}
+h1 {
+  font-size: 2.5em
+}
+
+h2 {
+  font-size: 2em
+}
+
+.h2stuff {
+    text-align: center;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+.pad-head {
+    padding-bottom: 1.0em;
+}
+
+p.home {
+    font-size: 2.0em;
+    line-height: 2.5em;
+}
+
+p.home2 {
+    font-size: 1.5em;
+    line-height: 1.75em;
+}
+
+a {
+  text-decoration: none;
+  color: #09f;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.contact {
+    line-height: 1.1em;
+}
+
+.footer {
+    padding: 1em 0 0 0;
+    /* background-color: #666666;
+    color: #dddddd; */
+    font-size: 0.50em;
+    line-height: 1.300em;
+}
