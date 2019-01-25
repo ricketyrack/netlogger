@@ -77,28 +77,26 @@
         (str " " label) [:span {:class "sr-on"}]]])
 
 (def navbar
-  [:nav {:class "navbar navbar-expand-md navbar-light bg-light"}
-   [:a.navbar-brand {:href (path-for :index)} "Kaufmann"]
-   [:button {:class "navbar-toggler" :type "button" :data-toggle "collapse"
-             :data-target "#navbarSupportedContent" :aria-controls "navbarSupportedContent"
-             :aria-expanded "false" :aria-label "Toggle navigation"}
-    [:span {:class "navbar-toggler-icon"}]]
-    ;; collect the nav links, forms, and other content toggling
-    [:div {:class "collapse navbar-collapse" :id "navbarSupportedContent"}
-     [:ul {:class "navbar-nav mr-auto"}
-      (navitem "home" (@classes :index)
-               (path-for :index)
-               "Home"     :i.fa.fa-home)
-      (navitem "services" (@classes :services)
-               (path-for  :services)
-               "Services" :i.fa.fa-wrench)
-      (navitem "contact" (@classes :contact)
-               (path-for :contact)
-               "Contact" :i.fa.fa-phone)
-      (navitem "about" (@classes :about)
-               (path-for :about)
-               "About" :i.fa.fa-info)]
-     [:ul {:class "nav navbar-nav navbar-right"}]]])
+  [:nav.navbar.navbar-expand-lg.navbar-light.bg-light
+   [:a { :href "/" } "Kaufmann"]
+   [:button.navbar-toggler { :type "button" :data-toggle "collapse" :data-target "#navbarSupportedContent" :aria-controls "navbarSupportedContent" :aria-expanded "false"
+                            :aria-label "Toggle navigation"}
+    [:span.navbar-toggler-icon]]
+
+   [:div.collapse.navbar-collapse {:id "navbarSupportedContent"}
+    [:ul {:class  "navbar-nav mr-auto"}
+     (navitem "home" (@classes :home)
+              (path-for :index)
+              "Home"     :i.fa.fa-home)
+     (navitem "services" (@classes :services)
+             (path-for  :services)
+             "Services" :i.fa.fa-wrench)
+     (navitem "contact" (@classes :contact)
+              (path-for :contact)
+              "Contact" :i.fa.fa-phone)
+     (navitem "about" (@classes :about)
+             (path-for :about)
+             "About" :i.fa.fa-info)]]])
 
 (defn home-page []
   (fn []
@@ -128,30 +126,30 @@
 (defn about-page []
   (fn []
     [:span.main
-     [:h3 "About Kaufmann"]
-     [:p "Test about paragraph"]]))
+     [:h3 "About"]
+     [:p "Rodney D. Kaufmann founded Rodney D. Kaufmann CPA in 1987. Rod holds a Bachelor of Science in Business Administration from Kansas State University receiving his CPA in 1982. He is a Certified Public Accountant in Oklahoma and Kansas. Rod’s professional expertise covers a wide range of industries including wholesale, retail, manufacturing, commercial and multi housing real estate, oil and gas, service companies, non-profits and foundations along with estate and tax planning. Rod is a member of the AICPA, CGMA and OSCPA."]]))
 
 (defn services-page []
   (fn []
-    [:span.main
+    [:div.main
      [:h3 "Kaufmann Services"]
-     [:p "Rodney D. Kaufmann CPA provides a wide range of services to individuals and businesses in a variety of industries. With over 28 years of experience, we provide personalized service to meet each client’s specific needs in planning for the future and achieving their goals in an ever-changing financial and regulatory environment."
+     [:p "Rodney D. Kaufmann CPA provides a wide range of services to individuals and businesses in a variety of industries. With over 28 years of experience, we provide personalized service to meet each client’s specific needs in planning for the future and achieving their goals in an ever-changing financial and regulatory environment."]
 
-      [:ul
-       [:li "Individual Tax Returns"]
-       [:li "Corporate Tax Returns"]
-       [:li "Partnership Tax Returns"]
-       [:li "Not for Profit Tax Returns"]
-       [:li "Tax Planning & Preparation"]
-       [:li "IRS Representation"]
-       [:li "Financial Statement Preparation"]
-       [:li "Accounting Review"]
-       [:li "Tax Audit Representation"]
-       [:li "Estate & Trust Tax Preparation"]
-       [:li "Sales Tax Compliance"]
-       [:li "Reviews & Compilations"]
-       [:li "Bookkeeping & Payroll"]
-       [:li "Other Services"]]]]))
+     [:ul
+      [:li "Individual Tax Returns"]
+      [:li "Corporate Tax Returns"]
+      [:li "Partnership Tax Returns"]
+      [:li "Not for Profit Tax Returns"]
+      [:li "Tax Planning & Preparation"]
+      [:li "IRS Representation"]
+      [:li "Financial Statement Preparation"]
+      [:li "Accounting Review"]
+      [:li "Tax Audit Representation"]
+      [:li "Estate & Trust Tax Preparation"]
+      [:li "Sales Tax Compliance"]
+      [:li "Reviews & Compilations"]
+      [:li "Bookkeeping & Payroll"]
+      [:li "Other Services"]]]))
 
 ;; -------------------------
 ;; Translate routes -> page components
