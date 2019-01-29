@@ -65,6 +65,20 @@
 
 ;; (path-for :index)
 
+(defn home2-render []
+  [:div {:style {:height "300px"}}
+   ])
+
+(defn home2-did-mount [this]
+  (let [map-canvas (reagent/dom-node this)
+        map-options (clj->js {"center" (js/google.maps.LatLng. 36.000, -95.900)
+                              "zoom" 8})]
+    (js/google.maps.Map. map-canvas map-options)))
+
+(defn home2 []
+  (reagent/create-class {:reagent-render home2-render
+                         :component-did-mount home2-did-mount}))
+
 ;; -------------------------
 ;; Page components
 
@@ -78,7 +92,7 @@
 
 (def navbar
   [:nav.navbar.navbar-expand-lg.navbar-light.bg-light
-   [:a { :href "/" } "Kaufmann"]
+   [:a { :href "/" } "Rodney D. Kaufmann, CPA, Inc."]
    [:button.navbar-toggler { :type "button" :data-toggle "collapse" :data-target "#navbarSupportedContent" :aria-controls "navbarSupportedContent" :aria-expanded "false"
                             :aria-label "Toggle navigation"}
     [:span.navbar-toggler-icon]]
@@ -127,12 +141,15 @@
   (fn []
     [:span.main
      [:h3 "About"]
-     [:p "Rodney D. Kaufmann founded Rodney D. Kaufmann CPA in 1987. Rod holds a Bachelor of Science in Business Administration from Kansas State University receiving his CPA in 1982. He is a Certified Public Accountant in Oklahoma and Kansas. Rod’s professional expertise covers a wide range of industries including wholesale, retail, manufacturing, commercial and multi housing real estate, oil and gas, service companies, non-profits and foundations along with estate and tax planning. Rod is a member of the AICPA, CGMA and OSCPA."]]))
+     [:p "Rodney D. Kaufmann founded Rodney D. Kaufmann CPA in 1987. Rod holds a Bachelor of Science in Business Administration from Kansas State University receiving his CPA in 1982. He is a Certified Public Accountant in Oklahoma and Kansas. Rod’s professional expertise covers a wide range of industries including wholesale, retail, manufacturing, commercial and multi housing real estate, oil and gas, service companies, non-profits and foundations along with estate and tax planning. Rod is a member of the AICPA, CGMA and OSCPA."]
+     [:p
+      [:img {:src "images/aicpafront.png" :className "proimage"}]
+      [:img {:src "images/oscpafront.png" :className "proimage"}]]]))
 
 (defn services-page []
   (fn []
     [:div.main
-     [:h3 "Kaufmann Services"]
+     [:h2 "Services"]
      [:p "Rodney D. Kaufmann CPA provides a wide range of services to individuals and businesses in a variety of industries. With over 28 years of experience, we provide personalized service to meet each client’s specific needs in planning for the future and achieving their goals in an ever-changing financial and regulatory environment."]
 
      [:ul
@@ -149,7 +166,8 @@
       [:li "Sales Tax Compliance"]
       [:li "Reviews & Compilations"]
       [:li "Bookkeeping & Payroll"]
-      [:li "Other Services"]]]))
+      [:li "Other Services"]]
+]))
 
 ;; -------------------------
 ;; Translate routes -> page components

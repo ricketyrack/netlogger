@@ -36,7 +36,9 @@
               :integrity    "sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
               :crossorigin  "anonymous"}]
     [:script {:src          "https://use.fontawesome.com/829a90d2af.js"}]
-    (include-js "/js/app.js")]))
+    [:script {:src          "https://maps.googleapis.com/maps/api/js?key=AIzaSyCM569Q3BkNg3L8ABoOqHD_bM5m_IEkCOg"}]
+    (include-js "/js/app.js")
+    (include-js "js/goog.js")]))
 
 (defn index-handler
   [_request]
