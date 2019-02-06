@@ -14,6 +14,7 @@
 (def router
   (reitit/router
    [["/"         :index]
+;;    ["/gmap"      :gmap]
     ["/services" :services]
     ["/contact"  :contact]
     ["/about"    :about]]))
@@ -25,6 +26,7 @@
 
 (defonce activeclass "active")
 (defonce classes     (reagent/atom {:home      "nav-item active"
+;;                                    :gmap      "nav-item"
                                     :services  "nav-item"
                                     :contact   "nav-item"
                                     :about     "nav-item"}))
@@ -48,7 +50,8 @@
   (println "navclick ")
   (case event.target.id
     "home"       (clerk/navigate-page! (path-for :index))
-    ;; "" (+ 1 1)  (clerk/navigate-page! (path-for :index))
+;;    "gmap"       (clerk/navigate-page! (path-for :gmap))
+    ;; "" (+ 1 1)  (clerk/navigate-page! (path-for :index))x1
     "services"   (clerk/navigate-page! (path-for :services))
      "about"     (clerk/navigate-page! (path-for :about))
      "contact"   (clerk/navigate-page! (path-for :contact))
@@ -65,19 +68,24 @@
 
 ;; (path-for :index)
 
-(defn home2-render []
-  [:div {:style {:height "300px"}}
+(defn gmap-render []
+  [:div {:style {:height "400px" :width "400px"}}
    ])
 
-(defn home2-did-mount [this]
-  (let [map-canvas (reagent/dom-node this)
-        map-options (clj->js {"center" (js/google.maps.LatLng. 36.000, -95.900)
-                              "zoom" 8})]
-    (js/google.maps.Map. map-canvas map-options)))
+(defn gmap-did-mount [this]
+  (let [map-canvas  (reagent/dom-node this)
+        map-center  (js/google.maps.LatLng. 36.085000 -95.923500)
+        map-options (clj->js {"center" map-center
+                              "zoom"   15})
+        my-map      (js/google.maps.Map. map-canvas map-options)]
+    (js/google.maps.Marker. (clj->js  {"position" map-center
+                                       "label"    "Rodney D. Kaufmann CPA, Inc."
+                                       "animation" js/google.maps.Animation.DROP.
+                                       "map"      my-map }))))
 
-(defn home2 []
-  (reagent/create-class {:reagent-render home2-render
-                         :component-did-mount home2-did-mount}))
+(defn gmap []
+  (reagent/create-class {:reagent-render gmap-render
+                         :component-did-mount gmap-did-mount}))
 
 ;; -------------------------
 ;; Page components
@@ -102,15 +110,18 @@
      (navitem "home" (@classes :home)
               (path-for :index)
               "Home"     :i.fa.fa-home)
+;;     (navitem "map" (@classes :gmap)
+;;              (path-for :gmap)
+;;              "Map"     :i.fa.fa-lightning)
      (navitem "services" (@classes :services)
-             (path-for  :services)
-             "Services" :i.fa.fa-wrench)
+              (path-for  :services)
+              "Services" :i.fa.fa-wrench)
      (navitem "contact" (@classes :contact)
               (path-for :contact)
               "Contact" :i.fa.fa-phone)
      (navitem "about" (@classes :about)
-             (path-for :about)
-             "About" :i.fa.fa-info)]]])
+              (path-for :about)
+              "About" :i.fa.fa-info)]]])
 
 (defn home-page []
   (fn []
@@ -121,21 +132,26 @@
 
 (defn contact-page []
   (fn []
-    [:span.main
-     [:h3 "Contacts"]
-     [:div
+    [:div.main
+     [:h3 "Contact"]
+     [:div.floater
       [:p.contact "RODNEY D. KAUFMANN CPA, INC."
        [:br]
        "5416 S YALE AVE"
        [:br]
        "SUITE 650"
        [:br]
-       "TULSA, OK 74135"]
+       "TULSA, OK 74135"
+       [:br]
+       "We are located just South of I-44 on Yale Ave"
+       [:br]  " on the West Side of the road."]
       [:p "918-747-7433"
        [:br]
        "918-747-7488 (Fax)"]
       [:a {:href "mailto:rod@kaufmanncpa.com"} "rod@kaufmanncpa.com"]
-      [:p "M-F : 8am to 5pm"]]]))
+      [:p "M-F : 8am to 5pm"]]
+     [:iframe { :src "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1585.0635004080923!2d-95.92449889772709!3d36.08499428596624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87b6ed34b9edb875%3A0x8abbdf0c88858e52!2sRodney+D+Kaufmann+Inc!5e1!3m2!1sen!2sus!4v1548798011634"
+               :width "500px" :height "500px" :frameBorder 0 :allowFullScreen true :style {:margin 0}}]]))
 
 (defn about-page []
   (fn []
@@ -175,6 +191,7 @@
 (defn page-for [route]
   (case route
     :index    #'home-page
+;;    :gmap     #'gmap
     :services #'services-page
     :about    #'about-page
     :contact  #'contact-page))
