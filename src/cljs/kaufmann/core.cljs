@@ -128,7 +128,10 @@
     [:span.main
      [:p.home "Only choose the best when it comes to your money!"]
      [:p.home2 "For over 28 years Rodney Kaufmann has specialized in providing individuals
-                and businesses throughout the USA with accounting and tax services."]]))
+                and businesses throughout the USA with accounting and tax services."]
+     [:p.home2 "We have moved.  See our "
+               [:a {:href (path-for :contact)} "contact"]
+               " page for our location and directions."]]))
 
 (defn contact-page []
   (fn []
