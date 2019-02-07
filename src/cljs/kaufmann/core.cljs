@@ -225,7 +225,7 @@
   (accountant/configure-navigation!
    {:nav-handler
     (fn [path]
-      (println path)
+;;      (println path)
 
       (let [match (reitit/match-by-path router path)
             current-page (:name (:data  match))

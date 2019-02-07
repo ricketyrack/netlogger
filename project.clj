@@ -8,19 +8,19 @@
                  [ring-server "0.5.0"]
                  [reagent "0.8.1"]
                  [reagent-utils "0.3.2"]
-                 [cljsjs/react-bootstrap "0.31.5-0"]
+                 [cljsjs/react-bootstrap "0.32.4-0"]
                  [ring "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [ring/ring-json "0.5.0-beta1"]
                  [hiccup "1.0.5"]
                  [yogthos/config "1.1.1"]
-                 [org.clojure/clojurescript "1.10.439"
+                 [org.clojure/clojurescript "1.10.516"
                   :scope "provided"]
-                 [metosin/reitit "0.2.10"]
+                 [metosin/reitit "0.2.13"]
                  [pez/clerk "1.0.0"]
                  [venantius/accountant "0.2.4"
                   :exclusions [org.clojure/tools.reader]]
-                 [cljs-http "0.1.45"]
+                 [cljs-http "0.1.46"]
                  [cljsjs/google-maps "3.18-1"]]
 
   :plugins [[lein-environ "1.1.0"]
