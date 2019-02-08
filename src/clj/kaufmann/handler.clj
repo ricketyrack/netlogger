@@ -5,10 +5,18 @@
             [config.core :refer [env]]))
 
 (def mount-target
-  [:div#app
-   [:h2 "Welcome to kaufmann"]
-   [:p "please wait while Figwheel is waking up ..."]
-   [:p "(Check the js console for hints if nothing exсiting happens.)"]])
+  [:div#zz
+   [:div#app]
+   [:div.sk-cube-grid
+    [:div.sk-cube.sk-cube1]
+    [:div.sk-cube.sk-cube2]
+    [:div.sk-cube.sk-cube3]
+    [:div.sk-cube.sk-cube4]
+    [:div.sk-cube.sk-cube5]
+    [:div.sk-cube.sk-cube6]
+    [:div.sk-cube.sk-cube7]
+    [:div.sk-cube.sk-cube8]
+    [:div.sk-cube.sk-cube9]]])
 
 (defn head []
   [:head
