@@ -24,42 +24,6 @@
     (:path (reitit/match-by-name router route params))
     (:path (reitit/match-by-name router route))))
 
-(defonce activeclass "active")
-(defonce classes     (reagent/atom {:home      "nav-item active"
-;;                                    :gmap      "nav-item"
-                                    :services  "nav-item"
-                                    :contact   "nav-item"
-                                    :about     "nav-item"}))
-
-;; page level stuff
-(defn on-js-reload []
-  (println "Reloaded"))
-
-;; utils
-(defn clearclasses []
-  (doseq [item @classes]
-    (swap! classes assoc (key item) "nav-item")))
-
-(defn clearandswap [k]
-  (println "clearandswap " k)
-  (clearclasses)
-  (swap! classes assoc k activeclass))
-
-(defn handlenavclick [event]
-  "handle click somewhere in the nav bar"
-  (println "navclick ")
-  (case event.target.id
-    "home"       (clerk/navigate-page! (path-for :index))
-;;    "gmap"       (clerk/navigate-page! (path-for :gmap))
-    ;; "" (+ 1 1)  (clerk/navigate-page! (path-for :index))x1
-    "services"   (clerk/navigate-page! (path-for :services))
-     "about"     (clerk/navigate-page! (path-for :about))
-     "contact"   (clerk/navigate-page! (path-for :contact))
-     "default")
-  (clearandswap (if (= event.target.id "home") :home (keyword event.target.id)))
-  (.preventDefault event)
-  nil)
-
 ;; macro
 (defmacro def-reagent-class [var-name js-ns js-name]
   `(def ~var-name
@@ -90,37 +54,31 @@
 ;; -------------------------
 ;; Page components
 
-(defn navitem [id myclass mypath label & [icon]]
-      [:li {:class myclass}
-       [:a { :href mypath
-            :id id :class "nav-link"}
+(defn navitem [id mypath label & [icon]]
+      [:li.link-wrapper>a.nav-link
+        {:href mypath :id id}
         (if icon
           [icon {:aria-hidden "false"}])
-        (str " " label) [:span {:class "sr-on"}]]])
+        (str " " label) [:span {:class "sr-on"}]])
 
 (def navbar
   [:nav.navbar.navbar-expand-lg.navbar-light.bg-light
    [:a { :href "/" } "Rodney D. Kaufmann, CPA, Inc."]
-   [:button.navbar-toggler { :type "button" :data-toggle "collapse" :data-target "#navbarSupportedContent" :aria-controls "navbarSupportedContent" :aria-expanded "false"
+   [:button.navbar-toggler { :type "button" :data-toggle "collapse" :data-target "#navbarSupportedContent" 
+                            :aria-controls "navbarSupportedContent" :aria-expanded "false"
                             :aria-label "Toggle navigation"}
     [:span.navbar-toggler-icon]]
-
    [:div.collapse.navbar-collapse {:id "navbarSupportedContent"}
-    [:ul {:class  "navbar-nav mr-auto"}
-     (navitem "home" (@classes :home)
-              (path-for :index)
+    [:ul.navbar-nav.mr-auto
+     (navitem "home" (path-for :index)
               "Home"     :i.fa.fa-home)
-;;     (navitem "map" (@classes :gmap)
-;;              (path-for :gmap)
+;;     (navitem "map" (path-for :gmap)
 ;;              "Map"     :i.fa.fa-lightning)
-     (navitem "services" (@classes :services)
-              (path-for  :services)
+     (navitem "services" (path-for  :services)
               "Services" :i.fa.fa-wrench)
-     (navitem "contact" (@classes :contact)
-              (path-for :contact)
+     (navitem "contact"  (path-for :contact)
               "Contact" :i.fa.fa-phone)
-     (navitem "about" (@classes :about)
-              (path-for :about)
+     (navitem "about"    (path-for :about)
               "About" :i.fa.fa-info)]]])
 
 (defn home-page []
@@ -185,8 +143,7 @@
       [:li "Sales Tax Compliance"]
       [:li "Reviews & Compilations"]
       [:li "Bookkeeping & Payroll"]
-      [:li "Other Services"]]
-]))
+      [:li "Other Services"]]]))
 
 ;; -------------------------
 ;; Translate routes -> page components
@@ -234,9 +191,7 @@
         (reagent/after-render clerk/after-render!)
         (session/put! :route {:current-page (page-for current-page)
                               :route-params route-params})
-        (clerk/navigate-page! path)
-        (clearandswap (if (= pathname "/") :home (keyword pathname)))
-        ))
+        (clerk/navigate-page! path)))
     :path-exists?
     (fn [path]
       (boolean (reitit/match-by-path router path)))})
