@@ -33,8 +33,7 @@
 ;; (path-for :index)
 
 (defn gmap-render []
-  [:div {:style {:height "400px" :width "400px"}}
-   ])
+  [:div {:style {:height "400px" :width "400px"}}])
 
 (defn gmap-did-mount [this]
   (let [map-canvas  (reagent/dom-node this)
@@ -56,7 +55,7 @@
 
 (defn navitem [id mypath label & [icon]]
       [:li.link-wrapper>a.nav-link
-        {:href mypath :id id}
+        {:href mypath :id id :on-click #(.click (.getElementById js/document "toggler"))}
         (if icon
           [icon {:aria-hidden "false"}])
         (str " " label) [:span {:class "sr-on"}]])
@@ -64,7 +63,7 @@
 (def navbar
   [:nav.navbar.navbar-expand-lg.navbar-light.bg-light
    [:a { :href "/" } "Rodney D. Kaufmann, CPA, Inc."]
-   [:button.navbar-toggler { :type "button" :data-toggle "collapse" :data-target "#navbarSupportedContent" 
+   [:button.navbar-toggler { :id "toggler"  :type "button" :data-toggle "collapse" :data-target "#navbarSupportedContent"
                             :aria-controls "navbarSupportedContent" :aria-expanded "false"
                             :aria-label "Toggle navigation"}
     [:span.navbar-toggler-icon]]
