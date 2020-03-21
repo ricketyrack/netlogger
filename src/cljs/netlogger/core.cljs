@@ -42,7 +42,7 @@
                               "zoom"   15})
         my-map      (js/google.maps.Map. map-canvas map-options)]
     (js/google.maps.Marker. (clj->js  {"position" map-center
-                                       "label"    "Rodney D. Kaufmann CPA, Inc."
+                                       "label"    "Center of Universexs."
                                        "animation" js/google.maps.Animation.DROP.
                                        "map"      my-map }))))
 
