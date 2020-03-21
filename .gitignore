@@ -13,5 +13,5 @@ pom.xml.asc
 *.log
 /.env
 /.sass-cache
-#*.
+\#*.
 .lsp/
