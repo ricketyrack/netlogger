@@ -1,7 +1,7 @@
 version: "3"
 services:
   web:
-    image: bugkiller448/kaufmann
+    image: bugkiller448/netlogger
     deploy:
       replicas: 3
       resources:

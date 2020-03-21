@@ -1,6 +1,6 @@
-(ns ^:figwheel-no-load kaufmann.dev
+(ns ^:figwheel-no-load netlogger.dev
   (:require
-    [kaufmann.core :as core]
+    [netlogger.core :as core]
     [devtools.core :as devtools]))
 
 (devtools/install!)

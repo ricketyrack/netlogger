@@ -1,5 +1,5 @@
-(ns kaufmann.server
-    (:require [kaufmann.handler :refer [app]]
+(ns netlogger.server
+    (:require [netlogger.handler :refer [app]]
               [config.core :refer [env]]
               [ring.adapter.jetty :refer [run-jetty]])
     (:gen-class))

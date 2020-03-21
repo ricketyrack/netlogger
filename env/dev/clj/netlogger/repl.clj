@@ -1,5 +1,5 @@
-(ns kaufmann.repl
-  (:use kaufmann.handler
+(ns netlogger.repl
+  (:use netlogger.handler
         figwheel-sidecar.repl-api
         ring.server.standalone
         [ring.middleware file-info file]))

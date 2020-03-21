@@ -1,4 +1,4 @@
-(ns kaufmann.core
+(ns netlogger.core
     (:require [reagent.core     :as reagent :refer [adapt-react-class atom ]]
               [reagent.session  :as session]
               [cljsjs.react-bootstrap]
@@ -42,7 +42,7 @@
                               "zoom"   15})
         my-map      (js/google.maps.Map. map-canvas map-options)]
     (js/google.maps.Marker. (clj->js  {"position" map-center
-                                       "label"    "Rodney D. Kaufmann CPA, Inc."
+                                       "label"    "Center of Universexs."
                                        "animation" js/google.maps.Animation.DROP.
                                        "map"      my-map }))))
 
@@ -63,7 +63,9 @@
 (def navbar
   [:nav.navbar.navbar-expand-lg.navbar-light.bg-light
    [:a { :href "/" } "Rodney D. Kaufmann, CPA, Inc."]
-   [:button.navbar-toggler { :id "toggler"  :type "button" :data-toggle "collapse" :data-target "#navbarSupportedContent"
+   [:button.navbar-toggler { :id "toggler"  :type "button"
+                            :data-toggle "collapse"
+                            :data-target "#navbarSupportedContent"
                             :aria-controls "navbarSupportedContent" :aria-expanded "false"
                             :aria-label "Toggle navigation"}
     [:span.navbar-toggler-icon]]
@@ -84,8 +86,8 @@
   (fn []
     [:span.main
      [:p.home "Only choose the best when it comes to your money!"]
-     [:p.home2 "For over 28 years Rodney Kaufmann has specialized in providing individuals
-                and businesses throughout the USA with accounting and tax services."]
+     [:p.home2 "For over 28 year
+                and businesses "]
      [:p.home2 "We have moved.  See our "
                [:a {:href (path-for :contact)} "contact"]
                " page for our location and directions."]]))
@@ -108,7 +110,7 @@
       [:p "918-747-7433"
        [:br]
        "918-747-7488 (Fax)"]
-      [:a {:href "mailto:rod@kaufmanncpa.com"} "rod@kaufmanncpa.com"]
+      [:a {:href "mailto:rod@netloggercpa.com"} "rod@netloggercpa.com"]
       [:p "M-F : 8am to 5pm"]]
      [:iframe { :src "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1585.0635004080923!2d-95.92449889772709!3d36.08499428596624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87b6ed34b9edb875%3A0x8abbdf0c88858e52!2sRodney+D+Kaufmann+Inc!5e1!3m2!1sen!2sus!4v1548798011634"
                :width "500px" :height "500px" :frameBorder 0 :allowFullScreen true :style {:margin 0}}]]))

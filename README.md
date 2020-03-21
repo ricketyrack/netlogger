@@ -1,6 +1,6 @@
-# kaufmann
+# netlogger
 
-This is the kaufmann project.
+This is the netlogger project.
 
 ## Development mode
 

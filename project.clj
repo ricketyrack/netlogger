@@ -1,39 +1,39 @@
-(defproject kaufmann "0.1.0-SNAPSHOT"
+(defproject netlogger "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.10.0"]
+  :dependencies [[org.clojure/clojure "1.10.2-alpha1"]
                  [ring-server "0.5.0"]
-                 [reagent "0.8.1"]
-                 [reagent-utils "0.3.2"]
-                 [cljsjs/react-bootstrap "0.32.4-0"]
-                 [ring "1.7.1"]
+                 [reagent "0.10.0"]
+                 [reagent-utils "0.3.3"]
+                 [cljsjs/react-bootstrap "0.33.1-0"]
+                 [ring "1.8.0"]
                  [ring/ring-defaults "0.3.2"]
-                 [ring/ring-json "0.5.0-beta1"]
-                 [hiccup "1.0.5"]
-                 [yogthos/config "1.1.1"]
-                 [org.clojure/clojurescript "1.10.516"
+                 [ring/ring-json "0.5.0"]
+                 [hiccup "2.0.0-alpha2"]
+                 [yogthos/config "1.1.7"]
+                 [org.clojure/clojurescript "1.10.597"
                   :scope "provided"]
-                 [metosin/reitit "0.2.13"]
+                 [metosin/reitit "0.4.2"]
                  [pez/clerk "1.0.0"]
-                 [venantius/accountant "0.2.4"
+                 [venantius/accountant "0.2.5"
                   :exclusions [org.clojure/tools.reader]]
                  [cljs-http "0.1.46"]
                  [cljsjs/google-maps "3.18-1"]]
 
   :plugins [[lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.7"]
-            [lein-asset-minifier "0.2.7"
+            [lein-asset-minifier "0.4.6"
              :exclusions [org.clojure/clojure]]]
 
-  :ring {:handler kaufmann.handler/app
-         :uberwar-name "kaufmann.war"}
+  :ring {:handler netlogger.handler/app
+         :uberwar-name "netlogger.war"}
 
   :min-lein-version "2.5.0"
-  :uberjar-name "kaufmann.jar"
-  :main kaufmann.server
+  :uberjar-name "netlogger.jar"
+  :main netlogger.server
   :clean-targets ^{:protect false}
   [:target-path
    [:cljsbuild :builds :app :compiler :output-dir]
@@ -57,9 +57,9 @@
               :pretty-print  false}}
             :app
             {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-             :figwheel {:on-jsload "kaufmann.core/mount-root"}
+             :figwheel {:on-jsload "netlogger.core/mount-root"}
              :compiler
-             {:main "kaufmann.dev"
+             {:main "netlogger.dev"
               :asset-path "/js/out"
               :output-to "target/cljsbuild/public/js/app.js"
               :output-dir "target/cljsbuild/public/js/out"
@@ -79,12 +79,12 @@
    :nrepl-middleware [cider.piggieback/wrap-cljs-repl
                       ]
    :css-dirs ["resources/public/css"]
-   :ring-handler kaufmann.handler/app}
+   :ring-handler netlogger.handler/app}
 
 
 
-  :profiles {:dev {:repl-options {:init-ns kaufmann.repl}
-                   :dependencies [[cider/piggieback "0.3.10"]
+  :profiles {:dev {:repl-options {:init-ns netlogger.repl}
+                   :dependencies [[cider/piggieback "0.4.2"]
                                   [binaryage/devtools "0.9.10"]
                                   [ring/ring-mock "0.3.2"]
                                   [ring/ring-devel "1.7.1"]
