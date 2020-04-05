@@ -54,7 +54,9 @@
               :output-dir       "target/cljsbuild/public/js"
               :source-map       "target/cljsbuild/public/js/app.js.map"
               :optimizations :advanced
-              :pretty-print  false}}
+              :pretty-print  false
+              ;; :externs ["externs.js"]
+		}}
             :app
             {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
              :figwheel {:on-jsload "netlogger.core/mount-root"}
@@ -65,10 +67,9 @@
               :output-dir "target/cljsbuild/public/js/out"
               :source-map true
               :optimizations :none
-              :pretty-print  true}}
-
-
-
+              :pretty-print  true
+              ;; :externs ["externs.js"]
+		}}
             }
    }
 
@@ -76,27 +77,25 @@
   {:http-server-root "public"
    :server-port 3449
    :nrepl-port 7002
-   :nrepl-middleware [cider.piggieback/wrap-cljs-repl
-                      ]
+   :nrepl-middleware [cider.piggieback/wrap-cljs-repl]
    :css-dirs ["resources/public/css"]
    :ring-handler netlogger.handler/app}
 
 
-
   :profiles {:dev {:repl-options {:init-ns netlogger.repl}
                    :dependencies [[cider/piggieback "0.4.2"]
-                                  [binaryage/devtools "0.9.10"]
-                                  [ring/ring-mock "0.3.2"]
-                                  [ring/ring-devel "1.7.1"]
-                                  [prone "1.6.1"]
-                                  [figwheel-sidecar "0.5.18"]
-                                  [nrepl "0.5.3"]
-                                  [pjstadig/humane-test-output "0.9.0"]
+                                  [binaryage/devtools "1.0.0"]
+                                  [ring/ring-mock "0.4.0"]
+                                  [ring/ring-devel "1.8.0"]
+                                  [prone "2020-01-17"]
+                                  [figwheel-sidecar "0.5.19"]
+                                  [nrepl "0.7.0-beta1"]
+                                  [pjstadig/humane-test-output "0.10.0"]
 
  ]
 
                    :source-paths ["env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.18"]
+                   :plugins [[lein-figwheel "0.5.19"]
 ]
 
                    :injections [(require 'pjstadig.humane-test-output)

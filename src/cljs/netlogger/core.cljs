@@ -1,9 +1,10 @@
 (ns netlogger.core
     (:require [reagent.core     :as reagent :refer [adapt-react-class atom ]]
+              [reagent.dom      :as dom     :refer [dom-node render]]
               [reagent.session  :as session]
-              [cljsjs.react-bootstrap]
-              [cljs.core.async              :refer [<!]]
-              [cljs-http.client :as http]
+;;              [cljsjs.react-bootstrap :refer [Nav]]
+;;              [cljs.core.async              :refer [<!]]a
+;;              [cljs-http.client :as http]
               [reitit.frontend  :as reitit]
               [clerk.core       :as clerk]
               [accountant.core  :as accountant]))
@@ -11,13 +12,35 @@
 ;; -------------------------
 ;; Routes
 
+(def colheaders ["Call", "First", "Last", "City", "State", "Class", "Previous"])
+
+(def statelist ["AB", "AE", "AK", "AL", "AR", "AS", "AZ", "BC",
+                "CA", "CO", "CT", "DC", "DE", "FL",
+                "GA", "HI", "IA", "ID", "IL", "IN",
+                "KS", "KY", "LA", "MA", "MB", "MD",
+                "ME", "MI", "MN", "MO", "MS", "MT",
+                "NB", "NC", "ND", "NE", "NH", "NJ",
+                "NL", "NM", "NS", "NT", "NU", "NV",
+                "NY", "OH", "OK", "ON", "OR", "PA",
+                "PE", "QC", "RI", "SC", "SD", "SK",
+                "TN", "TX", "UT", "VA", "VI", "VT",
+                "WA", "WI", "WV", "WY", "YT" ])
+
+(def newcallsign (reagent/atom "kc5ebr"))
+
+(def logentries (reagent/atom [{ :call "wd5etd" :first "stu" :last "lefkowitz" :address "123 nowhere st"  :city "outthere" :state "OK" :zip "12345" :license "general"
+                                 :lastcheckin "04/01"},
+                               { :call "n5xqk"  :first "johnny" :last "renfro" :address "321 anywhere rd" :city "bville"   :state "OK" :zip "73111" :license "extra"
+                                :lastcheckin  "never"}]))
+
 (def router
   (reitit/router
    [["/"         :index]
-;;    ["/gmap"      :gmap]
-    ["/services" :services]
+    ;;    ["/gmap"      :gmap]
+    ["/log"      :log]
     ["/contact"  :contact]
-    ["/about"    :about]]))
+    ["/about"    :about]
+    ["/login"    :login]]))
 
 (defn path-for [route & [params]]
   (if params
@@ -25,18 +48,22 @@
     (:path (reitit/match-by-name router route))))
 
 ;; macro
-(defmacro def-reagent-class [var-name js-ns js-name]
-  `(def ~var-name
-     (reagent/adapt-react-class
-      (aget ~js-ns ~js-name))))
+;;(defmacro def-reagent-class [var-name js-ns js-name]
+;;  `(def ~var-name
+;;     (reagent/adapt-react-class
+;;      (aget ~js-ns ~js-name))))
 
-;; (path-for :index)
+;; (def-reagent-class "Button" js/ReactBootstrap "Button")
+
+;; (def Button (reagent/adapt-react-class (aget js/ReactBootstrap "Button")))
+
+(path-for :index)
 
 (defn gmap-render []
   [:div {:style {:height "400px" :width "400px"}}])
 
 (defn gmap-did-mount [this]
-  (let [map-canvas  (reagent/dom-node this)
+  (let [map-canvas  (dom/dom-node this)
         map-center  (js/google.maps.LatLng. 36.085000 -95.923500)
         map-options (clj->js {"center" map-center
                               "zoom"   15})
@@ -55,96 +82,109 @@
 
 (defn navitem [id mypath label & [icon]]
       [:li.link-wrapper>a.nav-link
-        {:href mypath :id id :on-click #(.click (.getElementById js/document "toggler"))}
+       {:href mypath :id id
+        ;; :on-click #(.click (.getElementById js/document "toggler"))
+        }
         (if icon
           [icon {:aria-hidden "false"}])
         (str " " label) [:span {:class "sr-on"}]])
 
 (def navbar
-  [:nav.navbar.navbar-expand-lg.navbar-light.bg-light
-   [:a { :href "/" } "Rodney D. Kaufmann, CPA, Inc."]
-   [:button.navbar-toggler { :id "toggler"  :type "button"
-                            :data-toggle "collapse"
-                            :data-target "#navbarSupportedContent"
-                            :aria-controls "navbarSupportedContent" :aria-expanded "false"
-                            :aria-label "Toggle navigation"}
-    [:span.navbar-toggler-icon]]
-   [:div.collapse.navbar-collapse {:id "navbarSupportedContent"}
-    [:ul.navbar-nav.mr-auto
-     (navitem "home" (path-for :index)
-              "Home"     :i.fa.fa-home)
-;;     (navitem "map" (path-for :gmap)
-;;              "Map"     :i.fa.fa-lightning)
-     (navitem "services" (path-for  :services)
-              "Services" :i.fa.fa-wrench)
-     (navitem "contact"  (path-for :contact)
-              "Contact" :i.fa.fa-phone)
-     (navitem "about"    (path-for :about)
-              "About" :i.fa.fa-info)]]])
+  [:nav.navbar.navbar-expand-sm.navbar-light.bg-light
+   [:a { :href "/" :class "navbar-brand" } "Ham Net Logger"]
+   [:ul { :class "navbar-nav mr-auto" }
+    (navitem "home"     (path-for :index)
+             "Home"     :i.fa.fa-home)
+   ;;     (navitem "map"    (path-for :gmap)
+    ;;              "Map"    :i.fa.fa-lightning)
+    (navitem "log"      (path-for :log)
+             "Log"      :i.fas.fa-pen)
+    (navitem "contact"  (path-for :contact)
+             "Contact"  :i.fa.fa-phone)
+    (navitem "about"    (path-for :about)
+             "About"    :i.fa.fa-info)]
+    [:a { :class "btn btn-outline-success" :role "button" :href "/login" } "Login"]])
 
 (defn home-page []
   (fn []
-    [:span.main
-     [:p.home "Only choose the best when it comes to your money!"]
-     [:p.home2 "For over 28 year
-                and businesses "]
-     [:p.home2 "We have moved.  See our "
-               [:a {:href (path-for :contact)} "contact"]
-               " page for our location and directions."]]))
+    [:div.main
+     [:h3 "Howdy"]
+     [:button {:type "button" :class "btn btn-primary" } "with a button"]]))
+
+(defn log-click [e]
+  (.preventDefault e))
+
+(defn state-chooser [thekey chosenone]
+  [:select { :key thekey :value chosenone :style { :font-size "small" } :disabled true }
+   (for [st statelist]
+     [:option { :value st :key st } st ])])
+
+(defn text-in-col [call itsname value]
+  [:td.col-md-1.col-sm-6  { :key (str itsname "-" call) } value])
+
+(defn log-entry [log]
+  [:tr.row.ml-1 { :key (log :call) :style { :font-size "medium" } }
+   [:td.col-md-1.col-sm-6  { :key (str "call-"    (log :call)) } (log :call)]
+   (text-in-col (log :call) "first"   (log :first))
+   (text-in-col (log :call) "last"    (log :last))
+   (text-in-col (log :call) "cityt"   (log :city))
+   [:td.col-md-1.col-sm-6  { :key (str "state-"   (log :call)) }
+    (state-chooser (str "st-chooser-" (log :state)) (log :state))]
+   (text-in-col (log :call) "lic"     (log :license))
+   (text-in-col (log :call) "lastdt"  (log :lastcheckin))])
+
+(defn log-header []
+  [:tr.row.ml-1 { :key "header" :style { :padding-left "10px" :font-size "medium"
+                                        :background-color "blue" :color "white" } }
+   (for [title colheaders]
+     [:th.col-md-1 { :key title } title ])])
+
+(defn log-page []
+  (fn []
+    [:div.main
+     [:div.mb-1 { :style { :width "100%" :float "left" } }
+      [:form { :on-submit log-click }
+       [:input.form-control { :type "text" :id "callsign"    :aria-describedby "callsignsearch"
+                             :placeholder "Enter Call Sign"
+                             :style { :float "left" :width "20%" } } ]
+       [:button.btn.btn-primary { :type "submit" :style { :margin-left "5px" :margin-bottom "5px" :float "left" } } "Add" ]]]
+     [:div.table-responsive
+      [:table.table.table-striped { :font-size "small" }
+       [:tbody
+        (log-header)
+        (for [log @logentries]
+          (log-entry log))]]]]))
 
 (defn contact-page []
   (fn []
     [:div.main
      [:h3 "Contact"]
      [:div.floater
-      [:p.contact "RODNEY D. KAUFMANN CPA, INC."
-       [:br]
-       "5416 S YALE AVE"
-       [:br]
-       "SUITE 650"
+      [:p.contact "Unknown"
        [:br]
        "TULSA, OK 74135"
-       [:br]
-       "We are located just South of I-44 on Yale Ave"
-       [:br]  " on the West Side of the road."]
-      [:p "918-747-7433"
-       [:br]
-       "918-747-7488 (Fax)"]
-      [:a {:href "mailto:rod@netloggercpa.com"} "rod@netloggercpa.com"]
-      [:p "M-F : 8am to 5pm"]]
-     [:iframe { :src "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1585.0635004080923!2d-95.92449889772709!3d36.08499428596624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87b6ed34b9edb875%3A0x8abbdf0c88858e52!2sRodney+D+Kaufmann+Inc!5e1!3m2!1sen!2sus!4v1548798011634"
-               :width "500px" :height "500px" :frameBorder 0 :allowFullScreen true :style {:margin 0}}]]))
+       [:br]]]]))
 
 (defn about-page []
   (fn []
     [:span.main
      [:h3 "About"]
-     [:p "Rodney D. Kaufmann founded Rodney D. Kaufmann CPA in 1987. Rod holds a Bachelor of Science in Business Administration from Kansas State University receiving his CPA in 1982. He is a Certified Public Accountant in Oklahoma and Kansas. Rod’s professional expertise covers a wide range of industries including wholesale, retail, manufacturing, commercial and multi housing real estate, oil and gas, service companies, non-profits and foundations along with estate and tax planning. Rod is a member of the AICPA, CGMA and OSCPA."]
-     [:p
-      [:img {:src "images/aicpafront.png" :className "proimage"}]
-      [:img {:src "images/oscpafront.png" :className "proimage"}]]]))
+     [:p "This is the about page"]]))
 
-(defn services-page []
+(defn login-page []
   (fn []
     [:div.main
-     [:h2 "Services"]
-     [:p "Rodney D. Kaufmann CPA provides a wide range of services to individuals and businesses in a variety of industries. With over 28 years of experience, we provide personalized service to meet each client’s specific needs in planning for the future and achieving their goals in an ever-changing financial and regulatory environment."]
-
-     [:ul
-      [:li "Individual Tax Returns"]
-      [:li "Corporate Tax Returns"]
-      [:li "Partnership Tax Returns"]
-      [:li "Not for Profit Tax Returns"]
-      [:li "Tax Planning & Preparation"]
-      [:li "IRS Representation"]
-      [:li "Financial Statement Preparation"]
-      [:li "Accounting Review"]
-      [:li "Tax Audit Representation"]
-      [:li "Estate & Trust Tax Preparation"]
-      [:li "Sales Tax Compliance"]
-      [:li "Reviews & Compilations"]
-      [:li "Bookkeeping & Payroll"]
-      [:li "Other Services"]]]))
+     [:h3 "Login"]
+     [:form
+      [:div {:class "form-group"}
+       [:label {:for "login"} "User Name"]
+       [:input {:type "text" :id "login" :class "form-control" :aria-describedby "loginhelp" :placeholder "Enter login"} ]
+       [:small {:id "loginhelp" :class "form-text text-muted" } "We will never share your email address with anyone" ]]
+      [:div { :class "form-group" }
+       [:label {:for "password" } "Password" ]
+       [:input.form-control {:type "password" :id "password" :placeholder "Password" }]
+       [:small {:id "loginhelp" :class "form-text text-muted" } "Eight characters minimum" ]]
+      [:button { :type "submit"  :class "btn btn-primary" } "Submit" ]]]))
 
 ;; -------------------------
 ;; Translate routes -> page components
@@ -152,10 +192,11 @@
 (defn page-for [route]
   (case route
     :index    #'home-page
-;;    :gmap     #'gmap
-    :services #'services-page
+    ;;    :gmap     #'gmap
+    :log      #'log-page
     :about    #'about-page
-    :contact  #'contact-page))
+    :contact  #'contact-page
+    :login    #'login-page))
 
 ;; -------------------------
 ;; Page mounting component
@@ -168,14 +209,13 @@
         navbar]
        [page]
        [:footer.footer
-        [:p "©2019 Rodney D. Kaufmann CPA, Inc."
-         ]]])))
+        [:p "©2020 Unknown."]]])))
 
 ;; -------------------------
 ;; Initialize app
 
 (defn mount-root []
-  (reagent/render [current-page]
+  (dom/render [current-page]
                   (.getElementById js/document "app")))
 
 (defn init! []
@@ -188,13 +228,13 @@
       (let [match (reitit/match-by-path router path)
             current-page (:name (:data  match))
             route-params (:path-params match)
-            pathname     (second (re-matches #"^.(.*)" path))]
+            ;;            pathname     (second (re-matches #"^.(.*)" path))
+            ]
         (reagent/after-render clerk/after-render!)
         (session/put! :route {:current-page (page-for current-page)
                               :route-params route-params})
         (clerk/navigate-page! path)))
-    :path-exists?
-    (fn [path]
-      (boolean (reitit/match-by-path router path)))})
+    :path-exists? (fn [path]
+                    (boolean (reitit/match-by-path router path)))})
   (accountant/dispatch-current!)
   (mount-root))

@@ -14,4 +14,7 @@ pom.xml.asc
 /.env
 /.sass-cache
 \#*.
-.lsp/
+.lsp
+.lsp/sqlite.1.d
+.rebel_readline_history
+
