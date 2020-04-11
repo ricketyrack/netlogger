@@ -12,26 +12,26 @@
 ;; -------------------------
 ;; Routes
 
-(def colheaders ["Call", "First", "Last", "City", "State", "Class", "Previous"])
+(def colheaders [{ :label "Call"      :widthclass "col-md-1 sm-hidden" },
+                 { :label "First",    :widthclass "col-md-1 col-sm-6" },
+                 { :label "Last",     :widthclass "col-md-1 col-sm-6" },
+                 { :label "City",     :widthclass "col-md-1 col-sm-6" },
+                 { :label "State",    :widthclass "col-md-2 col-sm-6" },
+                 { :label "Class",    :widthclass "col-md-1 col-sm-6" },
+                 { :label "Prev",     :widthclass "col-md-1 col-sm-6" },
+                 { :label "In",       :widthclass "col-md-1 col-sm-6" }])
 
-(def statelist ["AB", "AE", "AK", "AL", "AR", "AS", "AZ", "BC",
-                "CA", "CO", "CT", "DC", "DE", "FL",
-                "GA", "HI", "IA", "ID", "IL", "IN",
-                "KS", "KY", "LA", "MA", "MB", "MD",
-                "ME", "MI", "MN", "MO", "MS", "MT",
-                "NB", "NC", "ND", "NE", "NH", "NJ",
-                "NL", "NM", "NS", "NT", "NU", "NV",
-                "NY", "OH", "OK", "ON", "OR", "PA",
-                "PE", "QC", "RI", "SC", "SD", "SK",
-                "TN", "TX", "UT", "VA", "VI", "VT",
-                "WA", "WI", "WV", "WY", "YT" ])
+(def statelist [ "--Choose--", "AB", "AE", "AK", "AL", "AR", "AS", "AZ", "BC", "CA", "CO", "CT", "DC", "DE", "FL", "FM", "GA", "GU", "HI", "IA", "ID", "IL",
+                "IN", "KS", "KY", "LA", "MA", "MB", "MD", "ME", "MH", "MI", "MN", "MO", "MP", "MS", "MT", "NB", "NC", "ND", "NE", "NH", "NJ",
+                "NL", "NM", "NS", "NT", "NU", "NV", "NY", "OH", "OK", "ON", "OR", "PA", "PE", "PR", "QC", "RI", "SC", "SD", "SK", "TN",
+                "TX", "UT", "VA", "VI", "VT", "WA", "WI", "WV", "WY", "YT" ])
 
-(def newcallsign (reagent/atom "kc5ebr"))
+(def newcallsign (reagent/atom ""))
 
 (def logentries (reagent/atom [{ :call "wd5etd" :first "stu" :last "lefkowitz" :address "123 nowhere st"  :city "outthere" :state "OK" :zip "12345" :license "general"
-                                 :lastcheckin "04/01"},
+                                 :lastcheckin "04/01" :checkintime "8:30"},
                                { :call "n5xqk"  :first "johnny" :last "renfro" :address "321 anywhere rd" :city "bville"   :state "OK" :zip "73111" :license "extra"
-                                :lastcheckin  "never"}]))
+                                :lastcheckin  "never" :checkintime "8:32"}]))
 
 (def router
   (reitit/router
@@ -64,7 +64,7 @@
 
 (defn gmap-did-mount [this]
   (let [map-canvas  (dom/dom-node this)
-        map-center  (js/google.maps.LatLng. 36.085000 -95.923500)
+         map-center  (js/google.maps.LatLng. 36.085000 -95.923500)
         map-options (clj->js {"center" map-center
                               "zoom"   15})
         my-map      (js/google.maps.Map. map-canvas map-options)]
@@ -111,8 +111,15 @@
      [:h3 "Howdy"]
      [:button {:type "button" :class "btn btn-primary" } "with a button"]]))
 
-(defn log-click [e]
-  (.preventDefault e))
+(defn appendcallandclear []
+  (swap! logentries conj { :call @newcallsign :first "" :last "" :address "" :city "" :state "" :zip "" :lastcheckin "never" :checkintime (.getTime (js/Date.)) })
+  (reset! newcallsign ""))
+
+(defn log-submit [e]
+  (.preventDefault e)
+  (if (and @newcallsign (re-matches #"[aknv][a-z]{0,1}[0-9][a-z]{1,3}" @newcallsign))
+    (appendcallandclear)
+    (js/alert "Enter a valid call sign")))
 
 (defn state-chooser [thekey chosenone]
   [:select { :key thekey :value chosenone :style { :font-size "small" } :disabled true }
@@ -122,32 +129,34 @@
 (defn text-in-col [call itsname value]
   [:td.col-md-1.col-sm-6  { :key (str itsname "-" call) } value])
 
+(defn log-header []
+  [:tr.row.ml-1 { :key "header" :style { :padding-left "10px" :font-size "medium"
+                                        :background-color "blue" :color "white" } }
+   (for [header colheaders]
+     [:th { :key (header :label) :class (header :widthclass) } (header :label)  ])])
+
 (defn log-entry [log]
   [:tr.row.ml-1 { :key (log :call) :style { :font-size "medium" } }
    [:td.col-md-1.col-sm-6  { :key (str "call-"    (log :call)) } (log :call)]
    (text-in-col (log :call) "first"   (log :first))
    (text-in-col (log :call) "last"    (log :last))
    (text-in-col (log :call) "cityt"   (log :city))
-   [:td.col-md-1.col-sm-6  { :key (str "state-"   (log :call)) }
+   [:td.col-md-2.col-sm-6  { :key (str "state-"   (log :call)) }
     (state-chooser (str "st-chooser-" (log :state)) (log :state))]
    (text-in-col (log :call) "lic"     (log :license))
-   (text-in-col (log :call) "lastdt"  (log :lastcheckin))])
-
-(defn log-header []
-  [:tr.row.ml-1 { :key "header" :style { :padding-left "10px" :font-size "medium"
-                                        :background-color "blue" :color "white" } }
-   (for [title colheaders]
-     [:th.col-md-1 { :key title } title ])])
+   (text-in-col (log :call) "lastdt"  (log :lastcheckin))
+   (text-in-col (log :call) "checkin" (log :checkintime))])
 
 (defn log-page []
   (fn []
     [:div.main
      [:div.mb-1 { :style { :width "100%" :float "left" } }
-      [:form { :on-submit log-click }
+      [:form { :on-submit log-submit }
        [:input.form-control { :type "text" :id "callsign"    :aria-describedby "callsignsearch"
-                             :placeholder "Enter Call Sign"
+                             :placeholder "Enter Call Sign"  :value @newcallsign
+                             :on-change #(reset! newcallsign (-> % .-target .-value))
                              :style { :float "left" :width "20%" } } ]
-       [:button.btn.btn-primary { :type "submit" :style { :margin-left "5px" :margin-bottom "5px" :float "left" } } "Add" ]]]
+       [:button.btn.btn-primary { :type "submit" :style { :margin-left "5px" :margin-bottom "5px" :float "left"} } "Add" ]]]
      [:div.table-responsive
       [:table.table.table-striped { :font-size "small" }
        [:tbody

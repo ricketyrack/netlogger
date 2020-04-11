@@ -17,4 +17,6 @@ pom.xml.asc
 .lsp
 .lsp/sqlite.1.d
 .rebel_readline_history
+/.lsp
+.rebel_readline_history
 
